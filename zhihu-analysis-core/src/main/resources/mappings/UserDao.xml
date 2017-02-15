@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.care.zhihu.spider.dao.UserDao">
+
+	<insert id="insert">
+		INSERT INTO zhihu_user(
+			id,
+			user_name,
+			user_sex,
+			home_page,
+			self_introduction,
+			home,
+			industry,
+			career_experience,
+			educational_experience,
+			personal_profile,
+			user_image,
+			following,
+			followers,
+			following_topics,
+			following_column,
+			following_questions,
+			following_collections,
+			get_approval,
+			get_thanks,
+			get_collections,
+			lives,
+			certification_info,
+			zhihu_collection,
+			create_date,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{userName},
+			#{userSex},
+			#{homePage},
+			#{selfIntroduction},
+			#{home},
+			#{industry},
+			#{careerExperience},
+			#{educationalExperience},
+			#{personalProfile},
+			#{userImage},
+			#{following},
+			#{followers},
+			#{followingTopics},
+			#{followingColumn},
+			#{followingQuestions},
+			#{followingCollections},
+			#{getApproval},
+			#{getThanks},
+			#{getCollections},
+			#{lives},
+			#{certificationInfo},
+			#{zhihuCollection},
+			#{createDate},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+
+</mapper>
