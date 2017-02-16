@@ -1,6 +1,7 @@
 package org.care.zhihu.spider.processor;
 
 import org.apache.commons.lang.StringUtils;
+import org.care.zhihu.spider.entity.UserEntity;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
@@ -11,6 +12,13 @@ import us.codecraft.webmagic.scheduler.QueueScheduler;
 import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.selector.Selectable;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,7 +37,7 @@ public class UserProcessor implements PageProcessor {
 
     private String USER_HREF = "https://www\\.zhihu\\.com/people/.*";
 
-    private Site site = Site.me().setCycleRetryTimes(3).setSleepTime(1000).setTimeOut(3 * 60 * 1000)
+    private Site site = Site.me().setCycleRetryTimes(3).setRetryTimes(3).setSleepTime(1000).setTimeOut(3 * 60 * 1000)
             .setUserAgent("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36")
             .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
             .addHeader("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3")
@@ -44,10 +52,26 @@ public class UserProcessor implements PageProcessor {
         page.addTargetRequest(followingUrl);
 
         if (page.getUrl().regex(FOLLOWING_LIST).match() || page.getUrl().regex(FOLLOWERS_LIST).match()) {
-            page.addTargetRequests(page.getHtml().xpath("//div[@class='Profile-mainColumn']/div[@class='Card ProfileMain']/div[@class='List']").links().regex(USER_HREF).all());
+            List<String> list = page.getHtml()
+                    .xpath("//div[@class='Profile-mainColumn']/div[@class='Card ProfileMain']/div[@class='List']")
+                    .links()
+                    .regex(USER_HREF)
+                    .all();
+
+            for (Iterator<String> it = list.iterator(); it.hasNext();) {
+                String href = it.next();
+                String[] hrefArray = href.split("/people/");
+                if (hrefArray.length > 1) {
+                    if (hrefArray[1].indexOf("/") > 0) {
+                        it.remove();
+                    }
+                } else {
+                    it.remove();
+                }
+            }
+            page.addTargetRequests(list);
 
             //TODO 将其他分页的链接抓取下来
-
 
         } else {
             Selectable userName = page.getHtml().xpath("//div[@class='ProfileHeader-contentHead']/h1/span[@class='ProfileHeader-name']/text()");
@@ -95,7 +119,8 @@ public class UserProcessor implements PageProcessor {
             String zhihuCollection = null;
             String getThanks = null;
             String getCollections = null;
-            // TODO 利用正则表达式提取字符串
+
+            //利用正则表达式提取字符串
             List<String> card = page.getHtml().xpath("//div[@class='Profile-sideColumnItems']/div[@class='Profile-sideColumnItem']").all();
             for (String s : card) {
                 if (StringUtils.isNotBlank(s)) {
@@ -140,29 +165,48 @@ public class UserProcessor implements PageProcessor {
             if (StringUtils.isBlank(userName.toString())) { //如果取不到用户名称则跳过下载过程
                 page.setSkip(true);
             } else {
-                page.putField("userName", userName);
-                page.putField("userImage", userImage);
-                page.putField("selfIntroduction", selfIntroduction);
-                page.putField("homePage", homePage);
-                page.putField("following", following);
-                page.putField("follower", follower);
-                page.putField("lives", lives);
-                page.putField("followingTopics", followingTopics);
-                page.putField("followingColumn", followingColumn);
-                page.putField("followingQuestions", followingQuestions);
-                page.putField("followingCollections", followingCollections);
-                page.putField("certificationInfo", followingCollections);
-                page.putField("zhihuCollection", followingCollections);
-                page.putField("getThanks", followingCollections);
-                page.putField("getCollections", followingCollections);
-                page.putField("sex", sex);
-
+                UserEntity user = new UserEntity();
+                user.setUserName(userName!=null ? userName.toString() : null);
+                user.setUserImage(userImage!=null ? userImage.toString() : null);
+                user.setSelfIntroduction(selfIntroduction!=null ? selfIntroduction.toString() : null);
+                user.setHomePage(homePage!=null ? homePage.toString() : null);
+                user.setFollowing(following!=null ? following.toString() : null);
+                user.setFollowers(follower!=null ? follower.toString() : null);
+                user.setLives(lives!=null ? lives.toString() : null);
+                user.setFollowingTopics(followingTopics!=null ? followingTopics.toString() : null);
+                user.setFollowingColumn(followingColumn!=null ? followingColumn.toString() : null);
+                user.setFollowingQuestions(followingQuestions!=null ? followingQuestions.toString() : null);
+                user.setFollowingCollections(followingCollections!=null ? followingCollections.toString() : null);
+                user.setCertificationInfo(certificationInfo!=null ? certificationInfo.toString() : null);
+                user.setZhihuCollection(zhihuCollection!=null ? zhihuCollection.toString() : null);
+                user.setGetThanks(getThanks!=null ? getThanks.toString() : null);
+                user.setGetCollections(getCollections!=null ? getCollections.toString() : null);
+                user.setUserSex(sex!=null ? sex.toString() : null);
+                page.putField("user", user);
             }
         }
     }
 
     @Override
     public Site getSite() {
+        //使用IP代理，防止网站反爬
+//        List<String[]> list = new ArrayList<String[]>();
+//        URL base = this.getClass().getClassLoader().getResource("spider.proxy");
+//        BufferedReader bre = null;
+//        String str = null;
+//        try {
+//            bre = new BufferedReader(new FileReader(base.getFile()));
+//            while ((str = bre.readLine()) != null)
+//            {
+//                String[] array = str.split(":");
+//                list.add(array);
+//            }
+//        }catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        this.site.setHttpProxyPool(list, false);
+
         return this.site;
     }
 

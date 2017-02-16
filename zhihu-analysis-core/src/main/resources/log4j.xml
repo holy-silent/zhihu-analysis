@@ -8,6 +8,16 @@
         </layout>
     </appender>
 
+    <appender name="file" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="log/spilder-zhihu.log" />
+        <param name="Append" value="true" />
+        <param name="MaxFileSize" value="10MB" />
+        <param name="MaxBackupIndex" value="10000" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yy-MM-dd HH:mm:ss,SSS} %-5p %c(%F:%L) ## %m%n" />
+        </layout>
+    </appender>
+
     <logger name="org.apache" additivity="false">
         <level value="warn" />
         <appender-ref ref="stdout" />
@@ -16,6 +26,7 @@
     <root>
         <level value="info" />
         <appender-ref ref="stdout" />
+        <appender-ref ref="file" />
     </root>
 
 </log4j:configuration>

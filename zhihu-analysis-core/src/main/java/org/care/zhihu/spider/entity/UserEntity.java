@@ -205,4 +205,5 @@ public class UserEntity extends DataEntity<UserEntity>{
     public void setGetApproval(String getApproval) {
         this.getApproval = getApproval;
     }
+
 }

@@ -1,6 +1,7 @@
 package org.care.zhihu.spider.main;
 
 import org.care.zhihu.spider.entity.UserEntity;
+import org.care.zhihu.spider.pipeline.UserPipeline;
 import org.care.zhihu.spider.processor.UserProcessor;
 import org.care.zhihu.spider.service.UserService;
 import org.springframework.context.ApplicationContext;
@@ -8,6 +9,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.pipeline.FilePipeline;
 import us.codecraft.webmagic.scheduler.BloomFilterDuplicateRemover;
+import us.codecraft.webmagic.scheduler.FileCacheQueueScheduler;
 import us.codecraft.webmagic.scheduler.QueueScheduler;
 
 /**
@@ -25,16 +27,17 @@ import us.codecraft.webmagic.scheduler.QueueScheduler;
  */
 public class Startup {
     static public void main(String[] args) {
-        //加载spring mybatis
+        //加载spring
         ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-        UserService userService = (UserService)context.getBean("userService");
 
         UserProcessor p = new UserProcessor();
         p.setStartUrl("https://www.zhihu.com/people/kaifulee");
 
         Spider.create(p).addUrl(p.getStartUrl())
-                .setScheduler(new QueueScheduler().setDuplicateRemover(new BloomFilterDuplicateRemover(10000000)))
-                .addPipeline(new FilePipeline("D:\\webmagic\\"))
+//                .setScheduler(new FileCacheQueueScheduler("D:\\webmagic\\").setDuplicateRemover(new BloomFilterDuplicateRemover(5000)))
+                .setScheduler(new QueueScheduler().setDuplicateRemover(new BloomFilterDuplicateRemover(5000)))
+//                .addPipeline(new FilePipeline("D:\\webmagic\\"))
+                .addPipeline(new UserPipeline(context))
                 .thread(1)
                 .run();
     }
