@@ -21,7 +21,11 @@ import us.codecraft.webmagic.scheduler.QueueScheduler;
  * 4、分析活跃程度
  * 5、分析知乎用户中的美女图片【涉及到神经网络算法的应用】
  *
+ * 路人甲是个爬虫高手，可参考他的想法学习。
+ * 路人甲：https://www.zhihu.com/question/36132174/answer/145997723
  *
+ * 在哪里能找到各行业的分析研究报告?  该帖子所罗列的网址，也有许多值得学习的经验
+ * https://www.zhihu.com/question/19766160
  *
  * Created by van persie on 2017/2/15.
  */
