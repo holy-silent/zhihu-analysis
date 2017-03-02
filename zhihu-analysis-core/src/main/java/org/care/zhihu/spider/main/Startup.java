@@ -1,16 +1,25 @@
 package org.care.zhihu.spider.main;
 
+import org.care.utils.SpringContextUtils;
 import org.care.zhihu.spider.entity.UserEntity;
+import org.care.zhihu.spider.listener.ZhihuSpiderListener;
 import org.care.zhihu.spider.pipeline.UserPipeline;
 import org.care.zhihu.spider.processor.UserProcessor;
+import org.care.zhihu.spider.scheduler.EasyRedisScheduler;
 import org.care.zhihu.spider.service.UserService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.SpiderListener;
+import us.codecraft.webmagic.monitor.SpiderMonitor;
 import us.codecraft.webmagic.pipeline.FilePipeline;
 import us.codecraft.webmagic.scheduler.BloomFilterDuplicateRemover;
 import us.codecraft.webmagic.scheduler.FileCacheQueueScheduler;
 import us.codecraft.webmagic.scheduler.QueueScheduler;
+
+import javax.management.JMException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 爬虫启动类
@@ -33,16 +42,27 @@ public class Startup {
     static public void main(String[] args) {
         //加载spring
         ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
+        SpringContextUtils.setApplicationContext(context);
 
         UserProcessor p = new UserProcessor();
-        p.setStartUrl("https://www.zhihu.com/people/kaifulee");
+//        p.setStartUrl("https://www.zhihu.com/people/kaifulee");
+        p.setStartUrl("https://www.zhihu.com/people/kafka0102");
 
-        Spider.create(p).addUrl(p.getStartUrl())
+        List<SpiderListener> listSpiderListener = new ArrayList<SpiderListener>();
+        listSpiderListener.add(new ZhihuSpiderListener());
+        Spider zhihuSpider = Spider.create(p).addUrl(p.getStartUrl())
 //                .setScheduler(new FileCacheQueueScheduler("D:\\webmagic\\").setDuplicateRemover(new BloomFilterDuplicateRemover(5000)))
-                .setScheduler(new QueueScheduler().setDuplicateRemover(new BloomFilterDuplicateRemover(5000)))
+//                .setScheduler(new QueueScheduler().setDuplicateRemover(new BloomFilterDuplicateRemover(5000)))
 //                .addPipeline(new FilePipeline("D:\\webmagic\\"))
-                .addPipeline(new UserPipeline(context))
-                .thread(1)
-                .run();
+                .setSpiderListeners(listSpiderListener)
+                .setScheduler(new EasyRedisScheduler("127.0.0.1", 6379))
+                .addPipeline(new UserPipeline())
+                .thread(2);
+        try {
+            SpiderMonitor.instance().register(zhihuSpider);
+        } catch (JMException e) {
+            e.printStackTrace();
+        }
+        zhihuSpider.start();
     }
 }

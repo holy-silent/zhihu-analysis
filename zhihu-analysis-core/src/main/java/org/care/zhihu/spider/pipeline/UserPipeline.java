@@ -1,9 +1,8 @@
 package org.care.zhihu.spider.pipeline;
 
+import org.care.utils.SpringContextUtils;
 import org.care.zhihu.spider.entity.UserEntity;
 import org.care.zhihu.spider.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.pipeline.Pipeline;
@@ -13,16 +12,10 @@ import us.codecraft.webmagic.pipeline.Pipeline;
  */
 public class UserPipeline implements Pipeline{
 
-    private ApplicationContext applicationContext;
-
-    public UserPipeline(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
     @Override
     public void process(ResultItems resultItems, Task task) {
 
-        UserService userService = (UserService)applicationContext.getBean("userService");
+        UserService userService = SpringContextUtils.getBean(UserService.class);
 
         UserEntity user = (UserEntity)resultItems.get("user");
 

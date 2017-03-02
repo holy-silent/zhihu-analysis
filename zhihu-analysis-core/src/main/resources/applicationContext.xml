@@ -49,16 +49,6 @@
 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
 	<!-- MyBatis end -->
 
-	<!-- 配置 JSR303 Bean Validator 定义 -->
-	<!--<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />-->
-
-	<!-- 缓存配置 -->
-	<!--
-	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-		<property name="configLocation" value="classpath:${ehcache.configFile}" />
-	</bean>
-	-->
-
 	<!-- 数据源配置, 使用 BoneCP 数据库连接池 -->
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
 		<!-- 数据源驱动类可不写，Druid默认会自动根据URL识别DriverClass -->
