@@ -20,6 +20,15 @@
     <br/>
 </p>
 <p>
+    <strong>2017/3/2</strong>
+</p>
+<p>
+    1、添加RedisSchelder
+</p>
+<p>
+    2、添加SpiderListener,记录下载失败的URL
+</p>
+<p>
     <strong>目前遗留问题：</strong>
 </p>
 <p>
