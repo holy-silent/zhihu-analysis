@@ -1,11 +1,11 @@
 package org.care.zhihu.spider.service.base;
 
+import org.care.zhihu.spider.dao.base.BaseEntity;
 import org.care.zhihu.spider.dao.base.CrudDao;
-import org.care.zhihu.spider.dao.base.DataEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-public abstract class CrudService<D extends CrudDao<T>, T extends DataEntity<T>> {
+public abstract class CrudService<D extends CrudDao<T>, T extends BaseEntity<T>> {
 	
 	/**
 	 * 持久层对象

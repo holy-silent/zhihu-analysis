@@ -20,8 +20,17 @@
     <br/>
 </p>
 <p>
+    <strong>2017/3/2</strong>
+</p>
+<p>
+    1、添加RedisSchelder
+</p>
+<p>
+    2、添加SpiderListener,记录下载失败的URL
+</p>
+<p>
     <strong>目前遗留问题：</strong>
 </p>
 <p>
-    知乎用户主页中，点击“<span style="color: rgb(133, 144, 166); font-family: &quot;Helvetica Neue&quot;, Helvetica, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei&quot;, &quot;Noto Sans CJK SC&quot;, &quot;WenQuanYi Micro Hei&quot;, Arial, sans-serif; font-size: 14px; text-align: center; background-color: rgb(255, 255, 255);">查看详细资料</span>”时触发的ajax请求，暂时没有解决动态获取数据的问题。目前思路是采用&quot;selenium&quot;提供Js运行环境，由其出发按钮点击操作，将页面下载下来后获取详细信息。
+    知乎用户主页中，点击“查看详细资料”时触发的ajax请求，暂时没有解决动态获取数据的问题。目前思路是采用&quot;selenium&quot;提供Js运行环境，由其触发按钮点击操作，将页面下载下来后获取详细信息。
 </p>
