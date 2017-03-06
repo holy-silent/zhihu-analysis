@@ -310,6 +310,13 @@
                     <excludes>
                         <exclude>log4j.xml</exclude>
                     </excludes>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>org.care.zhihu.spider.main.Startup</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>
